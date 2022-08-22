@@ -14,7 +14,7 @@ class _HomeState extends State<Home> {
     return DefaultTabController(initialIndex: 0,
       length: 3,
       child: Scaffold(
-        appBar: appBar("index"),
+        appBar: appBar(context,"index"),
         body: TabBarView(
           children: [
             filmes(),
