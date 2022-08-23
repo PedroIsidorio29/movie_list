@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fluttermoji/fluttermoji.dart';
+import 'package:get/get.dart';
 
 import 'appbar.dart';
 
@@ -12,6 +13,7 @@ class Avatar extends StatefulWidget {
 }
 
 class _AvatarState extends State<Avatar> {
+              final asd = Get.find<FluttermojiController>();
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -40,7 +42,17 @@ class _AvatarState extends State<Avatar> {
                         const BoxDecoration(boxShadow: [BoxShadow()])),
               ),
             ),
-            FluttermojiSaveWidget(
+
+
+            TextButton(onPressed: (){
+              // print(asd.selectedOptions);
+              print(asd.getFluttermojiFromOptions());
+              // asd.setFluttermoji();
+
+            }, child:const Text('Teste')),
+            FluttermojiSaveWidget(onTap: (){
+              print(asd.selectedOptions);
+            },
               theme: FluttermojiThemeData(
                   iconColor: const Color.fromARGB(255, 0, 0, 0)),
             )

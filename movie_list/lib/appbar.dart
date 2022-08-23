@@ -9,15 +9,19 @@ import 'view_website.dart';
 AppBar appBar(context, page) {
   return AppBar(
       toolbarHeight: 70.0,
-      leading: ElevatedButton(
-
-
+      title: ElevatedButton(
+        style: ButtonStyle(
+          elevation: MaterialStateProperty.resolveWith((states) => 0),
+          fixedSize: MaterialStateProperty.resolveWith(
+            (states) => const Size.fromRadius(50),
+          ),
+        ),
         onPressed: () {
           if (page == "index" || page == "avatar") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const WebSite()),
-            );
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const WebSite()),
+                (route) => false);
           } else {
             Navigator.pushAndRemoveUntil(
                 context,
@@ -25,7 +29,7 @@ AppBar appBar(context, page) {
                 (route) => false);
           }
         },
-        child: const Text("Site Oficial"),
+        child: const Text("Site Oficial", style: TextStyle(fontSize: 20)),
       ),
       actions: [
         TextButton(
@@ -35,10 +39,10 @@ AppBar appBar(context, page) {
           ),
           onPressed: () {
             if (page == "index" || page == "website") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Avatar()),
-              );
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Avatar()),
+                  (route) => false);
             } else {
               Navigator.pushAndRemoveUntil(
                   context,
