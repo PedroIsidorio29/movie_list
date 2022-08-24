@@ -42,17 +42,7 @@ class _AvatarState extends State<Avatar> {
                         const BoxDecoration(boxShadow: [BoxShadow()])),
               ),
             ),
-
-
-            TextButton(onPressed: (){
-              // print(asd.selectedOptions);
-              print(asd.getFluttermojiFromOptions());
-              // asd.setFluttermoji();
-
-            }, child:const Text('Teste')),
-            FluttermojiSaveWidget(onTap: (){
-              print(asd.selectedOptions);
-            },
+            FluttermojiSaveWidget(
               theme: FluttermojiThemeData(
                   iconColor: const Color.fromARGB(255, 0, 0, 0)),
             )

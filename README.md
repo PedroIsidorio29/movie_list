@@ -1,8 +1,6 @@
 # movie_list
 
-##
-
- - Desenvolver um aplicativo de listagem de filmes e personagens de Star Wars. 
+ - Aplicativo de listagem de filmes e personagens de Star Wars, contem botão para salvar o filme e personagem favorito, botão para visualização da página oficial da saga e visualização e edição de avatar.
 
 ##
 
@@ -10,14 +8,6 @@
  - As entradas e saídas esperadas da API estão detalhados nas seguintes páginas: 
      - https://swapi.dev/documentation#people 
      - https://swapi.dev/documentation#films 
-
-##
-
-### Packages
-
- - fluttermoji: `https://pub.dev/packages/fluttermoji`
- - InAppWebView: `https://pub.dev/packages/flutter_inappwebview `
- - SQLite: `https://pub.dev/packages/sqflite `
 
 ##
 

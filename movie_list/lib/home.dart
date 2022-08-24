@@ -1,5 +1,9 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_list/appbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -9,34 +13,161 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  getShared() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey("fav") == false) {
+      prefs.setString("fav", jsonEncode([]));
+    } else {
+      String? fav = prefs.getString("fav");
+      setState(() {
+        favoritos = jsonDecode(fav!);
+      });
+      // print(favoritos);
+    }
+  }
+
+  List favoritos = [];
+
+  @override
+  void initState() {
+    getShared();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(initialIndex: 0,
+    return DefaultTabController(
+      initialIndex: 0,
       length: 3,
       child: Scaffold(
-        appBar: appBar(context,"index"),
+        appBar: appBar(context, "index"),
         body: TabBarView(
           children: [
             filmes(),
             personagens(),
-            favoritos(),
+            favoritos_page(),
           ],
         ),
       ),
     );
   }
 
- 
+  Future getFutureDados(url, tipo) async {
+    var resp = await Dio().get(url);
+    return resp.data;
+  }
+
+  Color verificarFav(value, [tipo = "filmes"]) {
+    bool isFav = false;
+    var color = Colors.black26;
+    String text;
+    if (tipo == "filmes")
+      text = "episode_id";
+    else
+      text = "name";
+    for (var i = 0; i < favoritos.length; i++) {
+      if (favoritos[i][text] == value[text]) {
+        color = Colors.red;
+        break;
+      }
+    }
+    return color;
+  }
 
   Widget filmes() {
-    return Container(color: Colors.red);
+    return FutureBuilder(
+        future: getFutureDados("https://swapi.dev/api/films/", "api"),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            var data = jsonDecode(jsonEncode(snapshot.data));
+            List<dynamic> listaFilmes = data["results"];
+            return ListView.builder(
+                itemCount: listaFilmes.length,
+                itemBuilder: ((context, i) {
+                  return ListTile(
+                    title: Text("${listaFilmes[i]["title"]}"),
+                    trailing: IconButton(
+                        icon: Icon(Icons.favorite,
+                            color: verificarFav(listaFilmes[i])),
+                        onPressed: () async {
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          bool addFav = true;
+                          for (var x = 0; x < favoritos.length; x++) {
+                            if (favoritos[x]["episode_id"] ==
+                                listaFilmes[i]["episode_id"]) {
+                              favoritos.remove(favoritos[x]);
+                              addFav = false;
+                              break;
+                            }
+                          }
+                          if (addFav) {
+                            listaFilmes[i]
+                                .addAll({"view": listaFilmes[i]["title"]});
+                            print(listaFilmes[i]);
+                            favoritos.add(listaFilmes[i]);
+                          }
+                          prefs.setString("fav", jsonEncode(favoritos));
+                          getShared();
+                        }),
+                  );
+                }));
+          }
+          return circular();
+        });
   }
 
   Widget personagens() {
-    return Container(color: Colors.green);
+    return FutureBuilder(
+        future: getFutureDados("https://swapi.dev/api/people/", "api"),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            var data = jsonDecode(jsonEncode(snapshot.data));
+            List<dynamic> listPessoas = data["results"];
+            return ListView.builder(
+                itemCount: listPessoas.length,
+                itemBuilder: ((context, i) {
+                  return ListTile(
+                    title: Text("${listPessoas[i]["name"]}"),
+                    trailing: IconButton(
+                        icon: Icon(Icons.favorite,
+                            color: verificarFav(listPessoas[i], "pessoas")),
+                        onPressed: () async {
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          bool addFav = true;
+                          for (var x = 0; x < favoritos.length; x++) {
+                            if (favoritos[x]["view"] ==
+                                listPessoas[i]["name"]) {
+                              favoritos.remove(favoritos[x]);
+                              addFav = false;
+                              break;
+                            }
+                          }
+                          if (addFav) {
+                            listPessoas[i]
+                                .addAll({"view": listPessoas[i]["name"]});
+                            favoritos.add(listPessoas[i]);
+                          }
+                          prefs.setString("fav", jsonEncode(favoritos));
+                          getShared();
+                        }),
+                  );
+                }));
+          }
+          return circular();
+        });
   }
 
-  Widget favoritos() {
-    return Container(color: Colors.blue);
+  Widget favoritos_page() {
+    return ListView.builder(itemBuilder: (context, i) {
+      return ListTile(
+        title: Text("${favoritos[i]["view"]}"),
+      );
+    });
   }
+
+  Widget circular() => Container(
+      margin: EdgeInsets.symmetric(horizontal: 150, vertical: 235),
+      child: CircularProgressIndicator());
 }
