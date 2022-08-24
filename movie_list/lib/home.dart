@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable, curly_braces_in_flow_control_structures, non_constant_identifier_names
+
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -104,7 +106,6 @@ class _HomeState extends State<Home> {
                           if (addFav) {
                             listaFilmes[i]
                                 .addAll({"view": listaFilmes[i]["title"]});
-                            print(listaFilmes[i]);
                             favoritos.add(listaFilmes[i]);
                           }
                           prefs.setString("fav", jsonEncode(favoritos));
@@ -160,14 +161,25 @@ class _HomeState extends State<Home> {
   }
 
   Widget favoritos_page() {
-    return ListView.builder(itemBuilder: (context, i) {
-      return ListTile(
-        title: Text("${favoritos[i]["view"]}"),
-      );
-    });
+    color(i) {
+      var color = const Color.fromARGB(255, 126, 241, 130);
+      if (favoritos[i]['title'] != null) {
+        color = const Color.fromARGB(255, 247, 118, 109);
+      }
+      return color;
+    }
+
+    return ListView.builder(
+        itemCount: favoritos.length,
+        itemBuilder: (context, i) {
+          return ListTile(
+            tileColor: color(i),
+            title: Text("${favoritos[i]["view"]}"),
+          );
+        });
   }
 
   Widget circular() => Container(
-      margin: EdgeInsets.symmetric(horizontal: 150, vertical: 235),
-      child: CircularProgressIndicator());
+      margin: const EdgeInsets.symmetric(horizontal: 150, vertical: 235),
+      child: const CircularProgressIndicator());
 }
